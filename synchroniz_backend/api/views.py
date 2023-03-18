@@ -16,9 +16,25 @@ from rest_framework.permissions import AllowAny
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.response import Response
 from django.http import HttpResponse, JsonResponse, QueryDict
+from allauth.socialaccount.models import SocialAccount
 
 
+class ExchangeTokenView(APIView):
+    permission_classes = [AllowAny]
 
+    def post(self, request):
+        provider = request.data.get("provider")
+        uid = request.data.get("uid")
+        try:
+            social_account = SocialAccount.objects.get(
+                provider=provider, uid=uid)
+            user = social_account.user
+            refresh = RefreshToken.for_user(user)
+            return Response({'refresh': str(refresh.access_token),
+                             'access': str(refresh.access_token)
+                             })
+        except SocialAccount.DoesNotExist:
+            return Response({"error": "Invalid access token"})
 # Create your views here.
 
 class app_user_modelviewset(viewsets.ModelViewSet):

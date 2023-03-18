@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from api import views
+from .views import ExchangeTokenView
 
 
 from rest_framework_simplejwt.views import (
@@ -22,5 +23,6 @@ urlpatterns = [
     path("api_view/", include(router.urls)),
     path("api/login/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
     path("api/login/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
+    path('exchange-token/', ExchangeTokenView.as_view(), name='exchange-token'),
     
 ]
